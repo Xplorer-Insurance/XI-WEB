@@ -8,7 +8,7 @@ export const createRouter = () => {
   return createHashRouter([
     {
       path: "/",
-      element: <Layout />,
+      element: <Home />,
       children: [
         {
           path: "/",
