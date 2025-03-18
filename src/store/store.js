@@ -12,10 +12,12 @@ import {
 } from "redux-persist";
 import { menuReducer } from './slices/menuSlice';
 import { userReducer } from './slices/userSlice';
+import { filesReducer } from "./slices/filesSlice";
 
 const reducers = combineReducers({
   menu: menuReducer,
   user: userReducer,
+  files: filesReducer,
 });
 
 const persistConfig = {

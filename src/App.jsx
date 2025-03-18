@@ -1,5 +1,6 @@
 import { RouterProvider } from "react-router-dom";
 import { createRouter } from "./routes/Routes";
+import "@mantine/notifications/styles.css";
 
 function App() {
   const router = createRouter();
