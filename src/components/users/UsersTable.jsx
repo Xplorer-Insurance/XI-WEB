@@ -1,7 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Table, Pagination, Button, TextInput, Flex, Badge, Box, Checkbox } from '@mantine/core';
 import { IconSearch, IconBell, IconUser, IconCalendar } from '@tabler/icons-react';
 import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { allUsers } from '../../store/thunks/users-thunks';
 
 const Container = styled.div`
   padding: 20px;
@@ -41,7 +44,6 @@ const TableHeader = styled(Box)`
 
 const FileHeader = styled(Box)`
   width: 100%;
-  padding: 10px 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -53,7 +55,7 @@ const FileHeader = styled(Box)`
 
 const Cell = styled(Box)`
   color: ${({ header }) => header ? 'black' : '#49726C'};
-  padding: 10px 20px;
+  padding: ${({ header }) => header ? '10px 20px' : '10px 20px;'};
   width: ${({ width }) => width ? width : 'calc(100% / 6)'};
 `
 
@@ -117,21 +119,32 @@ const StatusBadge = ({ status }) => {
   return <Badge color={colors[status] || 'gray'}>{status}</Badge>;
 };
 
-const policies = [
-  { id: '500189', client: 'Alejandro González', product: 'Salud', agent: 'Rodrigo Briones', created: '18-10-2023', status: 'REGISTRADA' },
-  { id: '500185', client: 'Martín Rodríguez', product: 'Salud', agent: 'Carla Zuñiga', created: '15-09-2023', status: 'REGISTRADA' },
-  { id: '500183', client: 'Claudia Herrera', product: 'Salud', agent: 'Marcos Olmos', created: '10-09-2023', status: 'PAGADA' },
-  { id: '500180', client: 'Víctor Sepúlveda', product: 'Accidentes personales', agent: 'Marcos Olmos', created: '18-10-2023', status: 'ACTIVA' },
-  { id: '500179', client: 'Andrea Suárez', product: 'Vida', agent: 'Valentina Quiroz', created: '25-08-2023', status: 'ACTIVA' },
-  { id: '500289', client: 'Alejandro González', product: 'Salud', agent: 'Rodrigo Briones', created: '18-10-2023', status: 'REGISTRADA' },
-  { id: '500285', client: 'Martín Rodríguez', product: 'Salud', agent: 'Carla Zuñiga', created: '15-09-2023', status: 'REGISTRADA' },
-  { id: '500283', client: 'Claudia Herrera', product: 'Salud', agent: 'Marcos Olmos', created: '10-09-2023', status: 'PAGADA' },
-  { id: '500280', client: 'Víctor Sepúlveda', product: 'Accidentes personales', agent: 'Marcos Olmos', created: '18-10-2023', status: 'ACTIVA' },
-  { id: '500279', client: 'Andrea Suárez', product: 'Vida', agent: 'Valentina Quiroz', created: '25-08-2023', status: 'ACTIVA' },
-];
+// const policies = [
+//   { id: '500189', client: 'Alejandro González', product: 'Salud', agent: 'Rodrigo Briones', created: '18-10-2023', status: 'REGISTRADA' },
+//   { id: '500185', client: 'Martín Rodríguez', product: 'Salud', agent: 'Carla Zuñiga', created: '15-09-2023', status: 'REGISTRADA' },
+//   { id: '500183', client: 'Claudia Herrera', product: 'Salud', agent: 'Marcos Olmos', created: '10-09-2023', status: 'PAGADA' },
+//   { id: '500180', client: 'Víctor Sepúlveda', product: 'Accidentes personales', agent: 'Marcos Olmos', created: '18-10-2023', status: 'ACTIVA' },
+//   { id: '500179', client: 'Andrea Suárez', product: 'Vida', agent: 'Valentina Quiroz', created: '25-08-2023', status: 'ACTIVA' },
+//   { id: '500289', client: 'Alejandro González', product: 'Salud', agent: 'Rodrigo Briones', created: '18-10-2023', status: 'REGISTRADA' },
+//   { id: '500285', client: 'Martín Rodríguez', product: 'Salud', agent: 'Carla Zuñiga', created: '15-09-2023', status: 'REGISTRADA' },
+//   { id: '500283', client: 'Claudia Herrera', product: 'Salud', agent: 'Marcos Olmos', created: '10-09-2023', status: 'PAGADA' },
+//   { id: '500280', client: 'Víctor Sepúlveda', product: 'Accidentes personales', agent: 'Marcos Olmos', created: '18-10-2023', status: 'ACTIVA' },
+//   { id: '500279', client: 'Andrea Suárez', product: 'Vida', agent: 'Valentina Quiroz', created: '25-08-2023', status: 'ACTIVA' },
+// ];
 
 export const UsersTable = () => {
   const [selected, setSelected] = useState([]);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { users } = useSelector((state) => state.user);
+
+  useEffect(() => {
+    dispatch(allUsers());
+  }, []);
+
+  useEffect(() => {
+    console.log(users);
+  }, [users]);
 
   const handleSelect = (id) => {
     setSelected((current) => {
@@ -147,10 +160,20 @@ export const UsersTable = () => {
     <div style={{ padding: '20px 40px', borderRadius: '10px', height: '100%' }}>
       <Container>
         <Header>
-          <StyledButton rightSection={
-            <StyledRightSectionContainer>
-              <IconCalendar color='#D1D5DB' />
-            </StyledRightSectionContainer>} color="dark">Genera una póliza</StyledButton>
+          <div>
+            <StyledButton rightSection={
+              <StyledRightSectionContainer>
+                <IconCalendar color='#D1D5DB' />
+              </StyledRightSectionContainer>} color="dark">Genera una póliza
+            </StyledButton>
+            <StyledButton 
+              onClick={() => navigate('/import-users')}
+              ml={10} rightSection={
+              <StyledRightSectionContainer>
+                <IconUser color='#D1D5DB' />
+              </StyledRightSectionContainer>} color="dark">Agregar usuarios
+            </StyledButton>
+          </div>
           <SearchContainer>
             <TextInput placeholder="Search" icon={<IconSearch size={16} />} />
             <Button variant="subtle"><IconBell size={18} /></Button>
@@ -162,29 +185,36 @@ export const UsersTable = () => {
           <StyledTable>
             <TableHeader>
               <FileHeader>
-                <Cell header width={'50px'} />
+                {/* <Cell header width={'50px'}/>
                 <Cell header>N° de Póliza</Cell>
                 <Cell header>Cliente</Cell>
                 <Cell header>Producto</Cell>
                 <Cell header>Agente</Cell>
                 <Cell header>Creado el</Cell>
+                <Cell header width={'150px'}>Estado</Cell> */}
+                <Cell header width={'50px'}/>
+                <Cell header>ID</Cell>
+                <Cell header>Email</Cell>
+                <Cell header>Nombre</Cell>
+                <Cell header>Riesgo</Cell>
+                <Cell header>Actividad</Cell>
                 <Cell header width={'150px'}>Estado</Cell>
               </FileHeader>
             </TableHeader>
             <TableBody>
-              {policies.map((policy) => (
-                <FileBody key={policy.id}>
+              {users.map((user) => (
+                <FileBody key={user.id}>
                   <Cell width={'50px'}>
                     <Flex gap={10} align="center">
-                      <Checkbox checked={selected.includes(policy.id)} onChange={() => handleSelect(policy.id)} />
+                      <Checkbox checked={selected.includes(user.id)} onChange={() => handleSelect(user.id)} />
                     </Flex>
                   </Cell>
-                  <Cell>{policy.id}</Cell>
-                  <Cell>{policy.client}</Cell>
-                  <Cell>{policy.product}</Cell>
-                  <Cell>{policy.agent}</Cell>
-                  <Cell>{policy.created}</Cell>
-                  <Cell width={'150px'}><StatusBadge status={policy.status} /></Cell>
+                  <Cell>{user.id}</Cell>
+                  <Cell>{user.email}</Cell>
+                  <Cell>{`${user.name} ${user.lastname ? user.lastname : ''}`}</Cell>
+                  <Cell>{user.riskLevel}</Cell>
+                  <Cell>{user.profile?.actividad_detectada}</Cell>
+                  <Cell width={'150px'}><StatusBadge status={'active'} /></Cell>
                 </FileBody>
               ))}
             </TableBody>
